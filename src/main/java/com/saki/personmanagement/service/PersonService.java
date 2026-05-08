@@ -1,8 +1,7 @@
 package com.saki.personmanagement.service;
 
-import com.saki.personmanagement.model.Address;
-import com.saki.personmanagement.model.AddressType;
-import com.saki.personmanagement.model.Person;
+import com.saki.personmanagement.model.*;
+import com.saki.personmanagement.repository.OrderRepository;
 import com.saki.personmanagement.repository.PersonRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,9 +19,11 @@ import java.util.Optional;
 public class PersonService {
 
     private final PersonRepository personRepository;
+    private final OrderRepository orderRepository;
 
-    public PersonService(PersonRepository personRepository) {
+    public PersonService(PersonRepository personRepository, OrderRepository orderRepository) {
         this.personRepository = personRepository;
+        this.orderRepository = orderRepository;
     }
 
     // ==================== PERSON CRUD ====================
@@ -128,5 +129,43 @@ public class PersonService {
      */
     public List<Person> findByAddressType(AddressType addressType) {
         return personRepository.findByAddresses_AddressType(addressType);
+    }
+
+    // ==================== ORDER MANAGEMENT ====================
+
+    /**
+     * adds an order to an existing person.
+     *
+     * @param personId id of the person
+     * @param order    order to be added
+     * @return updated person
+     */
+    public Optional<Person> addOrder(Long personId, Order order) {
+        return personRepository.findById(personId)
+                .map(person -> {
+                    person.addOrder(order); // Helper method synchronizes both sides!
+                    return personRepository.save(person);
+                });
+    }
+
+    /**
+     * Finds order by status
+     */
+    public List<Order> findOrdersByStatus(OrderStatus status) {
+        return orderRepository.findByStatus(status);
+    }
+
+    /**
+     * Finds order by person ID
+     */
+    public List<Order> findOrdersByPersonId(Long personId) {
+        return orderRepository.findByPersonId(personId);
+    }
+
+    /**
+     * Finds the 10 most recent orders.
+     */
+    public List<Order> findLatestOrders() {
+        return orderRepository.findTop10ByOrderByOrderDateDesc();
     }
 }

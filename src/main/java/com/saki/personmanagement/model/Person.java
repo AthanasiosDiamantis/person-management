@@ -61,6 +61,15 @@ public class Person {
     @JsonManagedReference // Jackson manages the "onwner" side of the relationship
     private List<Address> addresses = new ArrayList<>();
 
+    @OneToMany(
+            mappedBy = "person",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true,
+            fetch = FetchType.LAZY)
+    @ToString.Exclude // avoids infinite loop in JSON
+    @JsonManagedReference(value = "person-orders") // Must match name in Order.java
+    private List<Order> orders = new ArrayList<>();
+
     // ======================== HELPER METHODS ========================
 
     /**
@@ -72,8 +81,31 @@ public class Person {
         address.setPerson(this); // synchronize the other side of the relationship
     }
 
+    /**
+     * removes an address and synchronizes the other side of the relationship.
+     * @param address
+     */
     public void removeAddress(Address address) {
         addresses.remove(address);
         address.setPerson(null); // synchronize the other side of the relationship
     }
+
+    /**
+     * adds on order and synchronizes both sides of the relationship.
+     * @param order
+     */
+    public void addOrder(Order order) {
+        orders.add(order);
+        order.setPerson(this);
+    }
+
+    /**
+     * removes an order and synchronizes both sides of the relationship.
+     * @param order
+     */
+    public void removeOrder(Order order) {
+        orders.remove(order);
+        order.setPerson(null);
+    }
+
 }

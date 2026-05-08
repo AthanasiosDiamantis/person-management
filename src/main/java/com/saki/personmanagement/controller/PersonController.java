@@ -1,8 +1,6 @@
 package com.saki.personmanagement.controller;
 
-import com.saki.personmanagement.model.Address;
-import com.saki.personmanagement.model.AddressType;
-import com.saki.personmanagement.model.Person;
+import com.saki.personmanagement.model.*;
 import com.saki.personmanagement.service.PersonService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -158,4 +156,45 @@ public class PersonController {
         return personService.findByAddressType(addressType);
     }
 
+    // ==================== ORDER ENDPOINTS ====================
+
+    /**
+     * POST /api/persons/{id}/orders - Adds an order to an existing person.
+     * Fügt eine Bestellung zu einer bestehenden Person hinzu.
+     */
+    @PostMapping("/{id}/orders")
+    public ResponseEntity<Person> addOrder(
+            @PathVariable Long id,
+            @Valid @RequestBody Order order) {
+        return personService.addOrder(id, order)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    /**
+     * GET /api/persons/{id}/orders - Returns all orders of a person.
+     * Gibt alle Bestellungen einer Person zurück.
+     */
+    @GetMapping("/{id}/orders")
+    public List<Order> getOrdersByPersonId(@PathVariable Long id) {
+        return personService.findOrdersByPersonId(id);
+    }
+
+    /**
+     * GET /api/persons/orders/latest - Returns the 10 most recent orders.
+     * Gibt die 10 neuesten Bestellungen zurück.
+     */
+    @GetMapping("/orders/latest")
+    public List<Order> getLatestOrders() {
+        return personService.findLatestOrders();
+    }
+
+    /**
+     * GET /api/persons/orders/by-status?status=... - Returns orders by status.
+     * Gibt Bestellungen anhand des Status zurück.
+     */
+    @GetMapping("/orders/by-status")
+    public List<Order> getOrdersByStatus(@RequestParam OrderStatus status) {
+        return personService.findOrdersByStatus(status);
+    }
 }
