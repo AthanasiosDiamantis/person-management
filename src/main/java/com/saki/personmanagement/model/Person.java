@@ -1,98 +1,79 @@
 package com.saki.personmanagement.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+import lombok.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Entity representing a person in the database.
  *
- * <p>Hibernate automatically creates the 'persons' table based on this class.</p>
+ * <p>OneToMany relationships to Address and Order.</p>
  *
  * @author saki
  */
 @Entity
 @Table(name="persons")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Person {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    /**
-     * First name - mandatory, max 100 characters.
-     * Vorname - Pflichtfeld, max 100 Zeichen.
-     */
-    @NotBlank( message = "Last name must not be blank")
-    @Column(name="first_name", nullable = false, length = 100)
+    @NotBlank(message = "First name must not be blank")
+    @Size(min = 2, max = 100, message = "First name must be between 2 and 100 characters")
+    @Column(name = "first_name", nullable = false, length = 100)
     private String firstName;
 
-    /**
-     * Last name - mandatory, max 100 characters.
-     * Nachname - Pflichtfeld, max 100 Zeichen.
-     */
-    @NotBlank( message = "Last name must not be blank")
-    @Column(name="last_name", nullable = false, length = 100)
+    @NotBlank(message = "Last name must not be blank")
+    @Size(min = 2, max = 100, message = "Last name must be between 2 and 100 characters")
+    @Column(name = "last_name", nullable = false, length = 100)
     private String lastName;
 
-    /**
-     * Email - must be valid format, unique in database.
-     * Email - muss gültiges Format haben, eindeutig in der Datenbank.
-     */
-    @Email( message = "Email must be valid format")
-    @Column(name="email", unique = true, nullable = false, length = 150)
+    @Email(message = "Email must be valid")
+    @Column(unique = true, nullable = false, length = 150)
     private String email;
 
+    /**
+     * OneToMany - one person can have multiple addresses.
+     *
+     * mappedBy = "person" -> Address.person is the owner
+     * cascade = ALL → operations cascade to addresses
+     * orphanRemoval = true → removes addresses without person
+     * fetch = LAZY → addresses loaded only when accessed
+     *
+     */
+    @OneToMany(
+            mappedBy = "person",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true,
+            fetch = FetchType.LAZY
+    )
+    @ToString.Exclude // exclude addresses from toString(), otherwise it would be recursive
+    @JsonManagedReference // Jackson manages the "onwner" side of the relationship
+    private List<Address> addresses = new ArrayList<>();
 
-    // ============================== Constructors ==================================
+    // ======================== HELPER METHODS ========================
 
     /**
-     * Default constructor required by JPA/Hibernate.
-     * Standard-Konstruktor wird von JPA/Hibernate benötigt.
+     * adds an address and synchornizes the other side of the relationship.
+     * @param address
      */
-    public Person() {
-        // default constructor
+    public void addAddress(Address address) {
+        addresses.add(address);
+        address.setPerson(this); // synchronize the other side of the relationship
     }
 
-    /**
-     * Constructor for creating a new person.
-     * Konstruktor zum Erstellen einer neuen Person.
-     */
-    public Person(String firstName, String lastName, String email) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.email = email;
+    public void removeAddress(Address address) {
+        addresses.remove(address);
+        address.setPerson(null); // synchronize the other side of the relationship
     }
-
-    // ============================== Getters and Setters ==============================
-
-    public Long getId() {
-        return id;
-    }
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getFirstName() {
-        return firstName;
-    }
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-
 }
