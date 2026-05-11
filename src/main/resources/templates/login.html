@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Person Management</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .login-container {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 10px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        h1 { color: #333; margin-bottom: 0.5rem; font-size: 1.8rem; }
+        .subtitle { color: #666; margin-bottom: 2rem; font-size: 0.9rem; }
+
+        .form-group { margin-bottom: 1.5rem; }
+
+        label { display: block; margin-bottom: 0.5rem; color: #333; font-weight: 500; }
+
+        input[type="text"], input[type="password"] {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #e1e8ed;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+
+        input[type="text"]:focus, input[type="password"]:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .remember-me { display: flex; align-items: center; margin-bottom: 1.5rem; }
+        .remember-me input { margin-right: 0.5rem; }
+
+        button {
+            width: 100%;
+            padding: 0.75rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        button:hover { opacity: 0.9; }
+
+        .error-message {
+            background-color: #fee;
+            border-left: 4px solid #f44;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            border-radius: 4px;
+            color: #c33;
+        }
+
+        .logout-message {
+            background-color: #efe;
+            border-left: 4px solid #4a4;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            border-radius: 4px;
+            color: #363;
+        }
+
+        .test-credentials {
+            margin-top: 1.5rem;
+            text-align: center;
+            color: #666;
+            font-size: 0.85rem;
+        }
+    </style>
+</head>
+<body>
+<div class="login-container">
+    <h1>🔐 Person Management</h1>
+    <p class="subtitle">Please sign in to continue / Bitte melde dich an</p>
+
+    <!-- Error message / Fehlermeldung -->
+    <div th:if="${param.error}" class="error-message">
+        ❌ Invalid credentials. Please try again. / Ungültige Anmeldedaten.
+    </div>
+
+    <!-- Logout success message / Erfolgsmeldung nach Logout -->
+    <div th:if="${param.logout}" class="logout-message">
+        ✅ Successfully logged out. / Erfolgreich abgemeldet.
+    </div>
+
+    <form th:action="@{/login}" method="post">
+        <div class="form-group">
+            <label for="username">Username / Benutzername:</label>
+            <input type="text"
+                   id="username"
+                   name="username"
+                   required
+                   autofocus
+                   placeholder="admin">
+        </div>
+
+        <div class="form-group">
+            <label for="password">Password / Passwort:</label>
+            <input type="password"
+                   id="password"
+                   name="password"
+                   required
+                   placeholder="********">
+        </div>
+
+        <div class="remember-me">
+            <input type="checkbox" id="remember-me" name="remember-me">
+            <label for="remember-me" style="margin-bottom: 0; font-weight: normal;">
+                Stay logged in (30 days) / Angemeldet bleiben (30 Tage)
+            </label>
+        </div>
+
+        <button type="submit">Sign In / Anmelden</button>
+    </form>
+
+    <div class="test-credentials">
+        <p><strong>Test credentials / Test-Zugänge:</strong></p>
+        <p>Admin: admin / admin123</p>
+        <p>User: user / user123</p>
+    </div>
+</div>
+</body>
+</html>
