@@ -5,6 +5,7 @@ import com.saki.personmanagement.service.PersonService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -64,6 +65,7 @@ public class PersonController {
      * @Valid triggers Bean Validation before processing.
      */
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Person> createPerson(@Valid @RequestBody Person person) {
         Person created = personService.createPerson(person);
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
