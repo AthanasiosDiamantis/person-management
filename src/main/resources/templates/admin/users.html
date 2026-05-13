@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>User Management</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 1200px; margin: 0 auto; padding: 20px; }
+        .header { display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 30px; padding-bottom: 20px; border-bottom: 2px solid #e74c3c; }
+        h1 { color: #e74c3c; }
+        .nav { margin-bottom: 20px; }
+        .nav a { margin-right: 15px; color: #667eea; text-decoration: none; font-weight: bold; }
+        .nav a:hover { text-decoration: underline; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; }
+        th { background-color: #e74c3c; color: white; }
+        tr:hover { background-color: #f5f5f5; }
+        .badge-admin { background: #e74c3c; color: white; padding: 3px 8px; border-radius: 12px; font-size: 0.8rem; }
+        .badge-user { background: #667eea; color: white; padding: 3px 8px; border-radius: 12px; font-size: 0.8rem; }
+        .badge-enabled { background: #27ae60; color: white; padding: 3px 8px; border-radius: 12px; font-size: 0.8rem; }
+        .badge-disabled { background: #95a5a6; color: white; padding: 3px 8px; border-radius: 12px; font-size: 0.8rem; }
+        .logout-button { background-color: #f44336; color: white; border: none;
+            padding: 10px 20px; border-radius: 5px; cursor: pointer; }
+    </style>
+</head>
+<body>
+<div class="header">
+    <div>
+        <h1>👤 User Management</h1>
+        <p>Welcome / Willkommen, <strong sec:authentication="name">Admin</strong>!</p>
+    </div>
+    <form th:action="@{/logout}" method="post">
+        <button type="submit" class="logout-button">Sign Out / Abmelden</button>
+    </form>
+</div>
+
+<div class="nav">
+    <a th:href="@{/dashboard}">👥 Persons</a>
+    <a th:href="@{/admin/users}">👤 User Management</a>
+    <a th:href="@{/admin/dashboard}">🔴 Admin Dashboard</a>
+</div>
+
+<h2>All Users / Alle Benutzer</h2>
+<table>
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Username</th>
+        <th>Role / Rolle</th>
+        <th>Status</th>
+        <th>Account Locked / Gesperrt</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="user : ${users}">
+        <td th:text="${user.id}">1</td>
+        <td th:text="${user.username}">username</td>
+        <td>
+            <span th:if="${user.role.name() == 'ADMIN'}" class="badge-admin">ADMIN</span>
+            <span th:unless="${user.role.name() == 'ADMIN'}" class="badge-user" th:text="${user.role}">USER</span>
+        </td>
+        <td>
+            <span th:if="${user.enabled}" class="badge-enabled">Active / Aktiv</span>
+            <span th:unless="${user.enabled}" class="badge-disabled">Disabled / Deaktiviert</span>
+        </td>
+        <td>
+            <span th:if="${user.accountNonLocked}" class="badge-enabled">Unlocked / Entsperrt</span>
+            <span th:unless="${user.accountNonLocked}" class="badge-disabled">Locked / Gesperrt</span>
+        </td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>

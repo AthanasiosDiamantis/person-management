@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome - Person Management</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 600px;
+            margin: 30px auto;
+            background-color: #ffffff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 1.8rem;
+        }
+        .header p {
+            margin: 5px 0 0 0;
+            opacity: 0.9;
+        }
+        .content {
+            padding: 30px;
+            color: #333;
+        }
+        .content h2 {
+            color: #667eea;
+        }
+        .info-box {
+            background-color: #f0f4ff;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        .info-box p {
+            margin: 5px 0;
+        }
+        .button {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px 30px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+            margin: 20px 0;
+        }
+        .footer {
+            background-color: #f8f9fa;
+            padding: 20px;
+            text-align: center;
+            color: #666;
+            font-size: 0.85rem;
+            border-top: 1px solid #eee;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>👤 Person Management</h1>
+        <p>New Person Created / Neue Person angelegt</p>
+    </div>
+
+    <div class="content">
+        <h2>Hello / Hallo!</h2>
+        <p>A new person has been added to the system.
+            Eine neue Person wurde dem System hinzugefügt.</p>
+
+        <div class="info-box">
+            <p><strong>Name:</strong>
+                <span th:text="${firstName + ' ' + lastName}">Max Mustermann</span>
+            </p>
+            <p><strong>Email:</strong>
+                <span th:text="${email}">max@example.com</span>
+            </p>
+            <p><strong>Created at / Erstellt am:</strong>
+                <span th:text="${createdAt}">01.01.2026</span>
+            </p>
+        </div>
+
+        <p>You can view all persons in the system at any time.
+            Sie können alle Personen im System jederzeit einsehen.</p>
+
+        <a href="http://localhost:8080/dashboard" class="button">
+            Open Dashboard / Dashboard öffnen
+        </a>
+    </div>
+
+    <div class="footer">
+        <p>Person Management System | Automated Notification / Automatische Benachrichtigung</p>
+        <p>This email was generated automatically / Diese Email wurde automatisch generiert.</p>
+    </div>
+</div>
+</body>
+</html>
